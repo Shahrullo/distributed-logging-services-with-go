@@ -19,3 +19,7 @@ go.work
 
 # MacOS
 .DS_Store
+
+# certificates and keys
+*.pem
+*.csr
