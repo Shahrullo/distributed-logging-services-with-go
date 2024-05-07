@@ -17,6 +17,7 @@ import (
 	"github.com/Shahrullo/distributed-services-with-go/agent"
 	api "github.com/Shahrullo/distributed-services-with-go/api/v1"
 	"github.com/Shahrullo/distributed-services-with-go/config"
+	"github.com/Shahrullo/distributed-services-with-go/internal/loadbalance"
 )
 
 func TestAgent(t *testing.T) {
@@ -134,7 +135,11 @@ func client(t *testing.T, agent *agent.Agent, tlsConfig *tls.Config) api.LogClie
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(tlsCreds)}
 	rpcAddr, err := agent.Config.RPCAddr()
 	require.NoError(t, err)
-	conn, err := grpc.Dial(rpcAddr, opts...)
+	conn, err := grpc.Dial(fmt.Sprintf(
+		"%s:///%s",
+		loadbalance.Name,
+		rpcAddr,
+	), opts...)
 	require.NoError(t, err)
 	client := api.NewLogClient(conn)
 	return client
